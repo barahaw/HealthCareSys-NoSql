@@ -1,9 +1,5 @@
 # Health Care System
 
-# Project Name
-
-A simple Node.js application using [Express](https://www.npmjs.com/package/express) for the web server and [dotenv](https://www.npmjs.com/package/dotenv) for environment variable management.
-
 ## Table of Contents
 
 - [About](#about)
