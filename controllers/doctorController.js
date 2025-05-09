@@ -3,7 +3,8 @@ const Doctor = require("../models/Doctor");
 exports.createDoctor = async (req, res) => {
   try {
     const doctor = new Doctor(req.body);
-    await doctor.save({ writeConcern: { w: "majority" } });
+    // AP-like: Save doctor immediately, no strong consistency guarantees
+    await doctor.save();
     res.status(201).json(doctor);
   } catch (err) {
     res.status(400).json({ error: err.message });

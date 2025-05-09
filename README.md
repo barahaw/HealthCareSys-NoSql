@@ -11,6 +11,7 @@ A backend system for healthcare monitoring, built with Node.js, Express, MongoDB
 - Cache alerts in Redis if heart rate > 120
 - Retrieve alerts from Redis
 - Aggregated endpoint to fetch all data from MongoDB and Redis
+- **AP-like and CP-like MongoDB usage:** Patient and doctor creation is immediate and does not guarantee strong consistency (AP). Updates to related collections (like adding a patient to a doctor's list) are fire-and-forget (AP), but vital sign alerting can be made CP-like (strong consistency) by ensuring all DB and Redis operations succeed before responding.
 
 ## Technologies Used
 
@@ -29,9 +30,9 @@ config/
   mongodb.js             # MongoDB connection logic
   redis.js               # Redis connection logic
 controllers/
-  doctorController.js    # Doctor-related logic
-  patientController.js   # Patient-related logic
-  vitalSignController.js # Vital sign logic
+  doctorController.js    # Doctor-related logic (AP-style)
+  patientController.js   # Patient-related logic (AP-style)
+  vitalSignController.js # Vital sign logic (AP/CP-style)
 models/
   Doctor.js              # Doctor schema
   Patient.js             # Patient schema
@@ -40,6 +41,7 @@ routes/
   doctorRoutes.js        # Doctor API routes
   patientRoutes.js       # Patient API routes
   vitalRoutes.js         # Vital sign API routes
+  allDataRoutes.js       # Aggregated data API route
 services/
   alertService.js        # Alert logic for vital signs
 README.md                # Project documentation
@@ -65,23 +67,23 @@ README.md                # Project documentation
 
 ### Doctor
 
-- `POST /api/doctors` — Create a doctor
+- `POST /api/doctors` — Create a doctor (AP-style: immediate, no strong consistency)
 - `GET /api/doctors` — List all doctors
 
 ### Patient
 
-- `POST /api/patients` — Create a patient
-- `GET /api/patients` — List all patients (no doctor info)
-- `GET /api/patients/withDoctors` — List all patients with doctor info
+- `POST /api/patients` — Create a patient (AP-style: immediate, fire-and-forget doctor update)
+- `GET /api/patients` — List all patients (no doctor info, AP-style: eventual consistency, no joins)
+- `GET /api/patients/withDoctors` — List all patients with doctor info (CP-style: uses aggregation/joins)
 
 ### Vital Signs
 
-- `POST /api/vitals` — Record a vital sign (caches alert if heartRate > 120)
+- `POST /api/vitals` — Record a vital sign (CP-style: alert logic is strongly consistent, fails if Redis alert cannot be set)
 - `GET /api/vitals/alert/:patientId` — Retrieve cached alert
 
 ### Aggregated Data
 
-- `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis (combined view)
+- `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis (combined view, AP-style: separate sources, no strong consistency)
 
 ## Notes
 
@@ -91,6 +93,8 @@ README.md                # Project documentation
   ```
 - Make sure MongoDB and Redis are running before starting the server.
 - All code is organized into controllers, models, routes, and services for maintainability.
+- **AP-like design:** Most write operations are immediate and do not guarantee strong consistency between collections. Related updates (like doctor-patient relationships) are handled asynchronously or in a fire-and-forget manner for high availability and partition tolerance.
+- **CP-like design:** Some operations (like vital sign alerting) can be made strongly consistent by ensuring all DB and Redis operations succeed before responding to the client.
 
 ## License
 

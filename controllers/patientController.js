@@ -4,13 +4,14 @@ const Doctor = require("../models/Doctor");
 exports.createPatient = async (req, res) => {
   try {
     const patient = new Patient(req.body);
-    await patient.save({ writeConcern: { w: "majority" } });
-    // Add patient to doctor's patients array
-    await Doctor.findByIdAndUpdate(
+    // AP-like: Save patient without waiting for doctor update (eventual consistency)
+    await patient.save();
+    // Fire-and-forget doctor update (no await, no error handling)
+    Doctor.findByIdAndUpdate(
       patient.doctorId,
       { $addToSet: { patients: patient._id } },
       { new: true }
-    );
+    ).catch(() => {});
     res.status(201).json(patient);
   } catch (err) {
     res.status(400).json({ error: err.message });

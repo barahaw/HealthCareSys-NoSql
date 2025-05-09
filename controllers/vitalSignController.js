@@ -29,7 +29,7 @@ exports.recordVitalSign = async (req, res) => {
     });
     await vital.save({ writeConcern: { w: "majority" } });
 
-    // Check all heart rates for this patient in the database
+    // CP-like: Ensure alert is set only after vital is saved and all DB operations succeed
     const allVitals = await VitalSign.find({ patientId });
     const hasHighHeartRate = allVitals.some((v) => v.heartRate > 120);
     if (hasHighHeartRate) {
@@ -37,23 +37,22 @@ exports.recordVitalSign = async (req, res) => {
       const message = `ALERT: High heart rate detected for patient ${
         patient ? patient.name : patientId
       }`;
-      console.log("DEBUG: About to set alert in Redis:", {
-        patientId,
-        message,
-        heartRate,
-      });
-      // Set a value in Redis with patientId and the current heart rate
       try {
-        const redisResult = await cacheAlertWithLog(
+        // Wait for Redis to confirm the alert is set before responding
+        await cacheAlertWithLog(
           patientId,
           `${message} | Heart Rate: ${heartRate}`
         );
-        console.log("DEBUG: Redis set result:", redisResult);
       } catch (redisErr) {
-        console.error("Failed to set alert in Redis:", redisErr);
+        // If Redis fails, return error (strong consistency)
+        return res
+          .status(500)
+          .json({
+            error: "Failed to set alert in Redis",
+            details: redisErr.message,
+          });
       }
     }
-
     res.status(201).json(vital);
   } catch (err) {
     res.status(400).json({ error: err.message });
