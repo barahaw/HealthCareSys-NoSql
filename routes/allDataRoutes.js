@@ -36,7 +36,9 @@ router.get("/", async (req, res) => {
     res.json({ mongo: patients, redis: redisData });
   } catch (error) {
     console.error("Error fetching all data:", error);
-    res.status(500).json({ message: "Error fetching all data", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching all data", error: error.message });
   }
 });
 
