@@ -82,7 +82,6 @@ README.md                # Project documentation
 ### Aggregated Data
 
 - `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis (combined view)
-- `GET /debug/redis-all` — Returns all Redis keys and their values (for debugging)
 
 ## Notes
 
