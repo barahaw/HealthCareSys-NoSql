@@ -19,23 +19,8 @@ exports.createPatient = async (req, res) => {
 
 exports.getPatients = async (req, res) => {
   try {
-    const patients = await Patient.find().populate("doctorId");
-    const result = patients.map((p) => {
-      const obj = p.toObject();
-      if (obj.doctorId && typeof obj.doctorId === "object") {
-        obj.doctor = {
-          _id: obj.doctorId._id,
-          name: obj.doctorId.name,
-          specialty: obj.doctorId.specialty,
-          phone: obj.doctorId.phone,
-        };
-      } else {
-        obj.doctor = null;
-      }
-      delete obj.doctorId;
-      return obj;
-    });
-    res.json(result);
+    const patients = await Patient.find(); // No populate, just raw patient data
+    res.json(patients);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -22,27 +22,27 @@ A backend system for healthcare monitoring, built with Node.js, Express, MongoDB
 ## Project Structure
 
 ```
-app.js                # Main server file
-package.json          # Project metadata and dependencies
-.env                  # Environment variables (not committed)
+server.js                # Main server file
+package.json             # Project metadata and dependencies
+.env                     # Environment variables (not committed)
 config/
-  mongodb.js          # MongoDB connection logic
-  redis.js            # Redis connection logic
+  mongodb.js             # MongoDB connection logic
+  redis.js               # Redis connection logic
 controllers/
-  doctorController.js # Doctor-related logic
-  patientController.js# Patient-related logic
+  doctorController.js    # Doctor-related logic
+  patientController.js   # Patient-related logic
   vitalSignController.js # Vital sign logic
 models/
-  Doctor.js           # Doctor schema
-  Patient.js          # Patient schema
-  VitalSign.js        # Vital sign schema
+  Doctor.js              # Doctor schema
+  Patient.js             # Patient schema
+  VitalSign.js           # Vital sign schema
 routes/
-  doctorRoutes.js     # Doctor API routes
-  patientRoutes.js    # Patient API routes
-  vitalRoutes.js      # Vital sign API routes
+  doctorRoutes.js        # Doctor API routes
+  patientRoutes.js       # Patient API routes
+  vitalRoutes.js         # Vital sign API routes
 services/
-  alertService.js     # Alert logic for vital signs
-README.md             # Project documentation
+  alertService.js        # Alert logic for vital signs
+README.md                # Project documentation
 ```
 
 ## Setup
@@ -53,16 +53,12 @@ README.md             # Project documentation
    ```
 2. Create a `.env` file in the root directory with the following content:
    ```
-   MONGO_URI=mongodb://localhost:27017/test
+   MONGO_URI=mongodb://localhost:27017/helathcare
    ```
 3. Ensure MongoDB and Redis are running locally on their default ports.
 4. Start the server:
    ```sh
-   npm start
-   ```
-   or
-   ```sh
-   node app.js
+   node server.js
    ```
 
 ## API Endpoints
@@ -75,8 +71,8 @@ README.md             # Project documentation
 ### Patient
 
 - `POST /api/patients` — Create a patient
-- `GET /api/patients` — List all patients
-- `GET /api/patients/all` — List all patients (structured response)
+- `GET /api/patients` — List all patients (no doctor info)
+- `GET /api/patients/withDoctors` — List all patients with doctor info
 
 ### Vital Signs
 
@@ -85,13 +81,14 @@ README.md             # Project documentation
 
 ### Aggregated Data
 
-- `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis
+- `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis (combined view)
+- `GET /debug/redis-all` — Returns all Redis keys and their values (for debugging)
 
 ## Notes
 
 - The `.env` file is required for MongoDB connection. Example:
   ```
-  MONGO_URI=mongodb://localhost:27017/test
+  MONGO_URI=mongodb://localhost:27017/helathcare
   ```
 - Make sure MongoDB and Redis are running before starting the server.
 - All code is organized into controllers, models, routes, and services for maintainability.

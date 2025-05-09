@@ -1,26 +1,28 @@
-require('dotenv').config();
-const express = require('express');
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
-const connectDB = require('./config/mongodb');
-require('./config/redis'); // Ensure Redis connects
+require("dotenv").config();
+const express = require("express");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const connectDB = require("./config/mongodb");
+require("./config/redis"); // Ensure Redis connects
 
-const doctorRoutes = require('./routes/doctorRoutes');
-const patientRoutes = require('./routes/patientRoutes');
-const vitalRoutes = require('./routes/vitalRoutes');
+const doctorRoutes = require("./routes/doctorRoutes");
+const patientRoutes = require("./routes/patientRoutes");
+const vitalRoutes = require("./routes/vitalRoutes");
+const allDataRouter = require("./routes/allDataRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 
-app.use('/api/doctors', doctorRoutes);
-app.use('/api/patients', patientRoutes);
-app.use('/api/vitals', vitalRoutes);
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/vitals", vitalRoutes);
+app.use("/all-data", allDataRouter);
 
-app.get('/', (req, res) => {
-  res.send('Healthcare Monitoring System API');
+app.get("/", (req, res) => {
+  res.send("Healthcare Monitoring System API");
 });
 
 connectDB().then(() => {
