@@ -11,7 +11,10 @@ A backend system for healthcare monitoring, built with Node.js, Express, MongoDB
 - Cache alerts in Redis if heart rate > 120
 - Retrieve alerts from Redis
 - Aggregated endpoint to fetch all data from MongoDB and Redis
-- **AP-like and CP-like MongoDB usage:** Patient and doctor creation is immediate and does not guarantee strong consistency (AP). Updates to related collections (like adding a patient to a doctor's list) are fire-and-forget (AP), but vital sign alerting can be made CP-like (strong consistency) by ensuring all DB and Redis operations succeed before responding.
+- **AP-like and CP-like MongoDB usage:**
+  - Patient and doctor creation is immediate and does not guarantee strong consistency (AP).
+  - Updates to related collections (like adding a patient to a doctor's list) are fire-and-forget (AP).
+  - Vital sign alerting is CP-like (strong consistency): all DB and Redis operations must succeed before responding.
 
 ## Technologies Used
 
@@ -94,7 +97,7 @@ README.md                # Project documentation
 - Make sure MongoDB and Redis are running before starting the server.
 - All code is organized into controllers, models, routes, and services for maintainability.
 - **AP-like design:** Most write operations are immediate and do not guarantee strong consistency between collections. Related updates (like doctor-patient relationships) are handled asynchronously or in a fire-and-forget manner for high availability and partition tolerance.
-- **CP-like design:** Some operations (like vital sign alerting) can be made strongly consistent by ensuring all DB and Redis operations succeed before responding to the client.
+- **CP-like design:** Some operations (like vital sign alerting) are strongly consistent by ensuring all DB and Redis operations succeed before responding to the client.
 
 ## License
 
