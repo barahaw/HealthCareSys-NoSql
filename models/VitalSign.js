@@ -1,23 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const vitalSignSchema = new mongoose.Schema(
-  {
-    patientId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Patient',
-      required: true
-    },
-    timestamp: {
-      type: Date,
-      required: true
-    },
-    heartRate: Number,
-    bloodPressure: String,
-    temperature: Number
+const vitalSignSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true,
   },
-  { timeseries: true }
-);
+  timestamp: { type: Date, default: Date.now },
+  heartRate: { type: Number, required: true },
+  bloodPressure: { type: String, required: true },
+  temperature: { type: Number, required: true },
+});
 
-const VitalSign = mongoose.model('VitalSign', vitalSignSchema);
-
-module.exports = VitalSign;
+module.exports = mongoose.model("VitalSign", vitalSignSchema);

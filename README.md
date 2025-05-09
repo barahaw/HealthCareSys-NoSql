@@ -1,68 +1,101 @@
-# Health Care System
+# HealthCareSys-NoSql
 
-## Table of Contents
+## Overview
 
-- [About](#about)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Dependencies](#dependencies)
-- [License](#license)
+A backend system for healthcare monitoring, built with Node.js, Express, MongoDB (Mongoose), and Redis. It supports CRUD operations for doctors and patients, records vital signs, and caches alerts in Redis for abnormal readings.
 
-## About
+## Features
 
-This is demo for out NoSql project
+- Create, fetch, and manage doctors and patients
+- Record and retrieve vital signs for patients
+- Cache alerts in Redis if heart rate > 120
+- Retrieve alerts from Redis
+- Aggregated endpoint to fetch all data from MongoDB and Redis
 
-## Installation
+## Technologies Used
 
-Clone the repository and install the dependencies:
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- Redis (node-redis)
 
-```bash
-git clone https://github.com/barahaw/HealthCareSys-NoSql.git
-cd your-repo-name
-npm install
-```
-
-## Usage
-
-1. Create a `.env` file in the root of your project:
-
-```bash
-touch .env
-```
-
-2. Add your environment variables to the `.env` file, for example:
+## Project Structure
 
 ```
-PORT=3000
+app.js                # Main server file
+package.json          # Project metadata and dependencies
+.env                  # Environment variables (not committed)
+config/
+  mongodb.js          # MongoDB connection logic
+  redis.js            # Redis connection logic
+controllers/
+  doctorController.js # Doctor-related logic
+  patientController.js# Patient-related logic
+  vitalSignController.js # Vital sign logic
+models/
+  Doctor.js           # Doctor schema
+  Patient.js          # Patient schema
+  VitalSign.js        # Vital sign schema
+routes/
+  doctorRoutes.js     # Doctor API routes
+  patientRoutes.js    # Patient API routes
+  vitalRoutes.js      # Vital sign API routes
+services/
+  alertService.js     # Alert logic for vital signs
+README.md             # Project documentation
 ```
 
-3. Start the server:
+## Setup
 
-```bash
-npm start
-```
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+2. Create a `.env` file in the root directory with the following content:
+   ```
+   MONGO_URI=mongodb://localhost:27017/test
+   ```
+3. Ensure MongoDB and Redis are running locally on their default ports.
+4. Start the server:
+   ```sh
+   npm start
+   ```
+   or
+   ```sh
+   node app.js
+   ```
 
-Or if you want to run it with live reload during development:
+## API Endpoints
 
-```bash
-npm install -g nodemon
-nodemon index.js
-```
+### Doctor
 
-4. Visit `http://localhost:3000` in your browser (assuming the port is 3000).
+- `POST /api/doctors` — Create a doctor
+- `GET /api/doctors` — List all doctors
 
-## Dependencies
+### Patient
 
-This project uses:
+- `POST /api/patients` — Create a patient
+- `GET /api/patients` — List all patients
+- `GET /api/patients/all` — List all patients (structured response)
 
-- **[Express](https://www.npmjs.com/package/express)** (`^5.1.0`)  
-  A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+### Vital Signs
 
-- **[dotenv](https://www.npmjs.com/package/dotenv)** (`^16.5.0`)  
-  A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+- `POST /api/vitals` — Record a vital sign (caches alert if heartRate > 120)
+- `GET /api/vitals/alert/:patientId` — Retrieve cached alert
+
+### Aggregated Data
+
+- `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis
+
+## Notes
+
+- The `.env` file is required for MongoDB connection. Example:
+  ```
+  MONGO_URI=mongodb://localhost:27017/test
+  ```
+- Make sure MongoDB and Redis are running before starting the server.
+- All code is organized into controllers, models, routes, and services for maintainability.
 
 ## License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
----
+MIT
