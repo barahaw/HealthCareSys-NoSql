@@ -23,6 +23,15 @@ A backend system for healthcare monitoring, built with Node.js, Express, MongoDB
 - MongoDB (Mongoose)
 - Redis (node-redis)
 
+## MongoDB Atlas Cluster Info
+
+- **Version:** 8.0.9
+- **Region:** AWS / Bahrain (me-south-1)
+- **Type:** Replica Set - 3 nodes (3 replicas)
+- **Backups:** Inactive
+- **Linked App Services:** None Linked
+- **Atlas SQL, Atlas Search, Create Index:** Available
+
 ## Project Structure
 
 ```
@@ -58,9 +67,10 @@ README.md                # Project documentation
    ```
 2. Create a `.env` file in the root directory with the following content:
    ```
-   MONGO_URI=mongodb://localhost:27017/helathcare
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority&appName=<appName>
    ```
-3. Ensure MongoDB and Redis are running locally on their default ports.
+   Replace `<username>`, `<password>`, `<cluster-url>`, `<database>`, and `<appName>` with your actual values.
+3. Ensure MongoDB Atlas and Redis are running/accessible.
 4. Start the server:
    ```sh
    node server.js
@@ -92,9 +102,9 @@ README.md                # Project documentation
 
 - The `.env` file is required for MongoDB connection. Example:
   ```
-  MONGO_URI=mongodb://localhost:27017/helathcare
+  MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority&appName=<appName>
   ```
-- Make sure MongoDB and Redis are running before starting the server.
+- Make sure MongoDB Atlas and Redis are running/accessible before starting the server.
 - All code is organized into controllers, models, routes, and services for maintainability.
 - **AP-like design:** Most write operations are immediate and do not guarantee strong consistency between collections. Related updates (like doctor-patient relationships) are handled asynchronously or in a fire-and-forget manner for high availability and partition tolerance.
 - **CP-like design:** Some operations (like vital sign alerting) are strongly consistent by ensuring all DB and Redis operations succeed before responding to the client.
