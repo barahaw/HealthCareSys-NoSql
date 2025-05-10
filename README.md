@@ -4,6 +4,21 @@
 
 A backend system for healthcare monitoring, built with Node.js, Express, MongoDB (Mongoose), and Redis. It supports CRUD operations for doctors and patients, records vital signs, and caches alerts in Redis for abnormal readings.
 
+## CAP Theorem in This System
+
+This hybrid approach lets you balance high availability for general data with strong consistency for critical alerts.
+
+### AP (Availability/Partition tolerance)
+
+- Most of CRUD operations (patients, doctors) are AP: always available, eventually consistent.
+- Patient and doctor creation is immediate and does not guarantee strong consistency (fire-and-forget updates).
+- Most CRUD operations for patients and doctors are AP-style.
+
+### CP (Consistency/Partition tolerance)
+
+- Vital sign alerting is CP: always consistent between MongoDB and Redis, but may be unavailable if Redis is down.
+- Vital sign alerting is CP-like: the alert is only stored in Redis if the current vital sign’s heartRate > 120, and the API returns an error if Redis fails (strong consistency between MongoDB and Redis for this operation).
+
 ## Features
 
 - Create, fetch, and manage doctors and patients
@@ -11,10 +26,6 @@ A backend system for healthcare monitoring, built with Node.js, Express, MongoDB
 - Cache alerts in Redis if heart rate > 120
 - Retrieve alerts from Redis
 - Aggregated endpoint to fetch all data from MongoDB and Redis
-- **AP-like and CP-like MongoDB usage:**
-  - Patient and doctor creation is immediate and does not guarantee strong consistency (AP).
-  - Updates to related collections (like adding a patient to a doctor's list) are fire-and-forget (AP).
-  - Vital sign alerting is CP-like (strong consistency): all DB and Redis operations must succeed before responding.
 
 ## Technologies Used
 
@@ -69,7 +80,7 @@ README.md                # Project documentation
    ```
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority&appName=<appName>
    ```
-   Replace `<username>`, `<password>`, `<cluster-url>`, `<database>`, and `<appName>` with your actual values.
+   Replace the placeholders with your actual MongoDB Atlas credentials.
 3. Ensure MongoDB Atlas and Redis are running/accessible.
 4. Start the server:
    ```sh
@@ -106,8 +117,6 @@ README.md                # Project documentation
   ```
 - Make sure MongoDB Atlas and Redis are running/accessible before starting the server.
 - All code is organized into controllers, models, routes, and services for maintainability.
-- **AP-like design:** Most write operations are immediate and do not guarantee strong consistency between collections. Related updates (like doctor-patient relationships) are handled asynchronously or in a fire-and-forget manner for high availability and partition tolerance.
-- **CP-like design:** Some operations (like vital sign alerting) are strongly consistent by ensuring all DB and Redis operations succeed before responding to the client.
 
 ## License
 
