@@ -108,6 +108,7 @@ README.md                # Project documentation
 ### Aggregated Data
 
 - `GET /all-data` — Returns all patient data from MongoDB and all keys/values from Redis (combined view, AP-style: separate sources, no strong consistency)
+  - This endpoint aggregates data from both MongoDB (patients) and Redis (all keys/values) to provide a unified view for monitoring and debugging.
 
 ## Notes
 

@@ -1,11 +1,12 @@
 const { createClient } = require("redis");
 
+// General Redis connection config with placeholders
 const client = createClient({
-  username: "default",
-  password: "mitmTF6uDBXjoP0w4njDYFHLoSb1xr1P",
+  username: "<username>",
+  password: "<password>",
   socket: {
-    host: "redis-12116.crce176.me-central-1-1.ec2.redns.redis-cloud.com",
-    port: 12116,
+    host: "<host>",
+    port: 12345, // <port> (replace with your port number)
   },
 });
 
